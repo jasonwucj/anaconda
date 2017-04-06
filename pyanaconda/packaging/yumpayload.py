@@ -43,6 +43,7 @@ import time
 from pyanaconda.iutil import execReadlines
 from pyanaconda.simpleconfig import simple_replace
 from functools import wraps
+from pyanaconda.product import productName 
 
 import logging
 log = logging.getLogger("packaging")
@@ -492,12 +493,16 @@ reposdir=%s
     @property
     def mirrorEnabled(self):
         with _yum_lock:
-            # yum initializes with plugins disabled, and when plugins are disabled
-            # _yum.plugins is a DummyYumPlugins object, which has no useful attributes.
-            if hasattr(self._yum.plugins, "_plugins"):
-                return "fastestmirror" in self._yum.plugins._plugins
+            # we just skip this on CentOS since we cant support it yet
+            if productName.startswith("CentOS"):
+              return False
             else:
-                return False
+              # yum initializes with plugins disabled, and when plugins are disabled
+              # _yum.plugins is a DummyYumPlugins object, which has no useful attributes.
+              if hasattr(self._yum.plugins, "_plugins"):
+                  return "fastestmirror" in self._yum.plugins._plugins
+              else:
+                  return False
 
     def getRepo(self, repo_id):
         """ Return the yum repo object. """
