@@ -663,6 +663,10 @@ reposdir=%s
                     # so that unattended installations on unreliable networks have
                     # a higher chance of finishing successfully
                     xdelay = xprogressive_delay()
+                    if not nm_is_connected():
+                      MAX_METADATA_DOWNLOAD_RETRIES = 1
+                    else:
+                      MAX_METADATA_DOWNLOAD_RETRIES = 10
                     for retry_count in xrange(0, MAX_METADATA_DOWNLOAD_RETRIES + 1):
                         if retry_count > 0:
                             # introduce a retry delay
